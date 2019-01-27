@@ -59,6 +59,9 @@ pub trait Source: Sized{
 
     /// Retrieves User's data from the source
     fn user<'a>(&'a self, id: u64) -> Result<User<'a, Self>, Error>;
+
+	/// Queries posts.
+	fn query<'a>(&'a self, tags: &'a str) -> Result<Query<'a, Self>, Error>;
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -217,6 +220,8 @@ impl Source for Sources{
             object: user
         })
     }
+
+	fn query<'a>(&'a self, id: u64) -> Result<>
 }
 
 /// A value rating the "safety" of a post, the higher the safety, the lesser the value
@@ -438,4 +443,9 @@ impl<'a, S: Source> Pool<'a, S>{
     pub fn creator(&self) -> Result<User<'a, S>, Error>{
         self.source.user(self.object.user_id)
     }
+}
+
+#[derive(Debug)]
+pub struct Query<'a, S: Source + 'a>{
+	source: &'a S,
 }

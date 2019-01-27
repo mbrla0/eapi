@@ -1,5 +1,5 @@
 [package]
-name = "why"
+name = "eapi"
 version = "0.1.0"
 authors = ["darkr"]
 
@@ -16,14 +16,14 @@ serde_derive = "0.8.23"
 # might be limited to a page-per-page queuing, with those pages having
 # a fixed number of elements each. Some of these operations, however,
 # might also not specify the total number of elements in the pools,
-# forcing the library to send an extra request to know weather or not
+# forcing the library to send an extra request to know whether or not
 # there are more elements needing to be retrieved.
 #
-# This feature allows the program to simply assume those limitations. While some
-# retrieval operations, such as comment pooling or querries, might benefit from
-# this feature, gaining a slight speed boost, it also indroduces the risk of
-# bugs when dealing with other compatible APIs, or even newer versions of the
-# same API, which don't have such restrictions.
+# This feature allows the program to simply assume those limitations.
+# While some retrieval operations, such as comment pooling or querries,
+# might benefit from this feature, gaining a slight speed boost, it also
+# indroduces the risk of bugs when dealing with other compatible APIs, or
+# even newer versions of the same API, which don't have such restrictions.
 #
 # It's highly recommended this feature be not enabled.
 e621-limits = []
