@@ -79,11 +79,11 @@ pub struct Post{
     pub tags: String,
     pub description: String,
     pub author: String,
-    pub source: String,
-    pub md5: String,
+    pub source: Option<String>,
+    pub md5: Option<String>,
 
     pub artist: Vec<String>,
-    pub sources: Vec<String>,
+    pub sources: Option<Vec<String>>,
 
     /// "Safety" rating of the post, either:
     ///     "s" => Safe
@@ -95,25 +95,25 @@ pub struct Post{
     pub score: i64,
     pub fav_count: u64,
 
-    pub file_size: u64,
+    pub file_size: Option<u64>,
     pub file_url: String,
-    pub file_ext: String,
+    pub file_ext: Option<String>,
 
     pub width: u64,
     pub height: u64,
 
     pub preview_url: String,
-    pub preview_width: u64,
-    pub preview_height: u64,
+    pub preview_width: Option<u64>,
+    pub preview_height: Option<u64>,
 
-    pub sample_url: String,
-    pub sample_width: u64,
-    pub sample_height: u64,
+    pub sample_url: Option<String>,
+    pub sample_width: Option<u64>,
+    pub sample_height: Option<u64>,
 
     pub has_comments: bool,
     pub has_notes: bool,
-    pub has_children: bool,
-    pub children: String,
+    pub has_children: Option<bool>,
+    pub children: Option<String>,
     pub parent_id: Option<u64>,
 
     pub created_at: Timestamp,
