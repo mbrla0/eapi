@@ -11,13 +11,14 @@ pub use e::Sources;
 
 use std::io::Read;
 pub trait Post{
+	fn id(&self)		-> u64;
 	fn data(&self)		-> Result<Box<Read>, Error>;
 	fn data_ext(&self)	-> Option<&str>;
 }
 
 pub trait Pool<P: Post>: Iterator<Item = Result<P, Error>>{
-	fn title(&self)		-> String;
-	fn author(&self)	-> String;
+	fn title(&self)			-> String;
+	fn description(&self)	-> String;
 }
 
 pub trait Source{
@@ -25,13 +26,12 @@ pub trait Source{
 	type Query:	Iterator<Item = Result<Self::Post, Error>>;
 	type Pool:	Pool<Self::Post>;
 
-	/* TODO: Change to impl Trait when allowed. */
 	fn query(&self, query: &str)
 		-> Option<Self::Query>;
 	fn pool(&self, id: u64)
-		-> Option<Self::Pool>;
+		-> Result<Self::Pool, Error>;
 	fn post(&self, id: u64)
-		-> Option<Self::Post>;
+		-> Result<Self::Post, Error>;
 }
 
 fn user_agent() -> String{

@@ -86,9 +86,9 @@ impl Source for Sources{
 	}
 
 	fn pool(&self, id: u64) 
-		-> Option<Pool>{
+		-> Result<Pool, Error>{
 		let qstr = format!("{}", id);
-		Some(match *self{
+		Ok(match *self{
 			Sources::E621 => {
 				let url_e621 = move |p: u32| {
 					format!(
@@ -102,8 +102,7 @@ impl Source for Sources{
 					page: 0,
 					obj: None,
 				};
-				/* TODO: Change this to be more correct. */
-				a.retrieve().unwrap();
+				a.retrieve()?;
 
 				a
 			},
@@ -120,7 +119,7 @@ impl Source for Sources{
 					page: 0,
 					obj: None
 				};
-				a.retrieve().unwrap();
+				a.retrieve()?;
 
 				a
 			}
@@ -128,9 +127,25 @@ impl Source for Sources{
 	}
 
 	fn post(&self, id: u64)
-		-> Option<Post>{
+		-> Result<Post, Error>{
 		
-		unimplemented!()
+		let url = match self{
+			Sources::E621 =>
+				format!("https://e621.net/post/show.json?id={}", id),
+			Sources::E926 =>
+				format!("https://e926.net/post/show.json?id={}", id),
+		};
+
+		get_client()
+			.and_then(|c|{
+				get_request(&c, &url)
+					.send().map_err(|e| Error::HyperError(e))
+			})
+			.and_then(|r|
+			serde_json::from_reader(r)
+					.map_err(|e| Error::ParseError(e))
+			)
+			.map(|obj| Post(obj))
 	}
 }
 
@@ -197,9 +212,14 @@ impl Pool{
 }
 impl IPool<Post> for Pool{
 	fn title(&self) -> String{
-		unimplemented!()
+		self.obj.as_ref().unwrap().name
+			.chars().map(|c| if c == '_' { ' ' } else { c })
+			.collect()
 	}
-	fn author(&self) -> String{ "TODO".to_owned() }
+
+	fn description(&self) -> String{
+		self.obj.as_ref().unwrap().description.clone()
+	}
 }
 impl Iterator for Pool{
 	type Item = Result<Post, Error>;
@@ -229,6 +249,7 @@ use std::io::Read;
 use ::Post as IPost;
 pub struct Post(objects::Post);
 impl IPost for Post{
+	fn id(&self) -> u64 { self.0.id }
 	fn data(&self) -> Result<Box<Read>, Error>{
 		let client = get_client()?;
 		
